@@ -1,0 +1,8 @@
+kivy
+kivymd
+pandas
+numpy
+requests
+python-dotenv
+pillow
+buildozer

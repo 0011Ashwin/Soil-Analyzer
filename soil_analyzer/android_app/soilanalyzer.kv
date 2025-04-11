@@ -1,0 +1,507 @@
+#:kivy 2.0.0
+#:import MDLabel kivymd.uix.label.MDLabel
+#:import MDTextField kivymd.uix.textfield.MDTextField
+#:import MDCard kivymd.uix.card.MDCard
+#:import MDTabs kivymd.uix.tab.MDTabs
+#:import MDTabsBase kivymd.uix.tab.MDTabsBase
+
+<GaugeWidget>:
+    orientation: 'vertical'
+    padding: 10
+    spacing: 5
+    
+    Label:
+        text: root.parameter
+        size_hint_y: None
+        height: '30dp'
+        font_size: '16sp'
+        bold: True
+    
+    BoxLayout:
+        orientation: 'horizontal'
+        size_hint_y: None
+        height: '30dp'
+        
+        Label:
+            id: gauge_value
+            text: f"{root.value:.1f}"
+            font_size: '20sp'
+            size_hint_x: 0.3
+        
+        Label:
+            id: gauge_category
+            text: "Medium"
+            font_size: '16sp'
+            size_hint_x: 0.7
+    
+    ProgressBar:
+        id: gauge_bar
+        value: 50
+        max: 100
+        size_hint_y: None
+        height: '20dp'
+
+<AnalyzeScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '50dp'
+            
+            Image:
+                source: 'soil_icon.png'  # Add your app icon here
+                size_hint_x: None
+                width: '40dp'
+            
+            Label:
+                text: 'Soil Health Analyzer'
+                font_size: '24sp'
+                bold: True
+                color: 0.18, 0.49, 0.2, 1  # Green color
+        
+        ScrollView:
+            do_scroll_x: False
+            
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: 10
+                spacing: 15
+                
+                # Parameters section
+                MDCard:
+                    orientation: 'vertical'
+                    padding: 15
+                    size_hint_y: None
+                    height: '300dp'
+                    
+                    Label:
+                        text: 'Soil Parameters'
+                        size_hint_y: None
+                        height: '30dp'
+                        font_size: '18sp'
+                        bold: True
+                    
+                    Label:
+                        text: 'pH Level (acidity/alkalinity)'
+                        size_hint_y: None
+                        height: '20dp'
+                        halign: 'left'
+                        text_size: self.size
+                    
+                    Slider:
+                        min: 0
+                        max: 14
+                        value: root.ph_value
+                        on_value: root.ph_value = self.value; root.update_gauges()
+                        size_hint_y: None
+                        height: '30dp'
+                    
+                    Label:
+                        text: 'Nitrogen (N) - kg/ha'
+                        size_hint_y: None
+                        height: '20dp'
+                        halign: 'left'
+                        text_size: self.size
+                    
+                    Slider:
+                        min: 0
+                        max: 150
+                        value: root.n_value
+                        on_value: root.n_value = self.value; root.update_gauges()
+                        size_hint_y: None
+                        height: '30dp'
+                    
+                    Label:
+                        text: 'Phosphorus (P) - kg/ha'
+                        size_hint_y: None
+                        height: '20dp'
+                        halign: 'left'
+                        text_size: self.size
+                    
+                    Slider:
+                        min: 0
+                        max: 100
+                        value: root.p_value
+                        on_value: root.p_value = self.value; root.update_gauges()
+                        size_hint_y: None
+                        height: '30dp'
+                    
+                    Label:
+                        text: 'Potassium (K) - kg/ha'
+                        size_hint_y: None
+                        height: '20dp'
+                        halign: 'left'
+                        text_size: self.size
+                    
+                    Slider:
+                        min: 0
+                        max: 100
+                        value: root.k_value
+                        on_value: root.k_value = self.value; root.update_gauges()
+                        size_hint_y: None
+                        height: '30dp'
+                
+                # Gauges section
+                MDCard:
+                    orientation: 'vertical'
+                    padding: 15
+                    size_hint_y: None
+                    height: '300dp'
+                    
+                    Label:
+                        text: 'Current Readings'
+                        size_hint_y: None
+                        height: '30dp'
+                        font_size: '18sp'
+                        bold: True
+                    
+                    GridLayout:
+                        cols: 2
+                        spacing: 10
+                        padding: 5
+                        
+                        GaugeWidget:
+                            id: ph_gauge
+                            parameter: 'pH'
+                            value: root.ph_value
+                        
+                        GaugeWidget:
+                            id: n_gauge
+                            parameter: 'N'
+                            value: root.n_value
+                        
+                        GaugeWidget:
+                            id: p_gauge
+                            parameter: 'P'
+                            value: root.p_value
+                        
+                        GaugeWidget:
+                            id: k_gauge
+                            parameter: 'K'
+                            value: root.k_value
+                
+                # Analyze button
+                Button:
+                    text: 'Analyze Soil'
+                    size_hint_y: None
+                    height: '50dp'
+                    background_color: 0.18, 0.49, 0.2, 1  # Green color
+                    on_press: root.analyze_soil()
+                
+                # Progress indicator (hidden by default)
+                ProgressBar:
+                    id: analyze_progress
+                    size_hint_y: None
+                    height: '10dp'
+                    opacity: 0
+                    value: 50  # Indeterminate progress
+
+<ResultsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        
+        # Header with back button
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '50dp'
+            
+            Button:
+                text: 'Back'
+                size_hint_x: None
+                width: '60dp'
+                on_press: app.root.current = 'analyze'
+            
+            Label:
+                text: 'Soil Analysis Results'
+                font_size: '20sp'
+                bold: True
+        
+        # Crop info
+        Label:
+            text: f"Most suitable crop: {root.suitable_crop}"
+            size_hint_y: None
+            height: '30dp'
+            font_size: '18sp'
+            bold: True
+        
+        # Tabs for different result views
+        TabbedPanel:
+            do_default_tab: False
+            tab_width: self.width / 3
+            
+            TabbedPanelItem:
+                text: 'Report'
+                
+                ScrollView:
+                    do_scroll_x: False
+                    
+                    BoxLayout:
+                        orientation: 'vertical'
+                        size_hint_y: None
+                        height: self.minimum_height
+                        padding: 10
+                        spacing: 15
+                        
+                        Label:
+                            id: report_content
+                            text: root.report_text
+                            size_hint_y: None
+                            height: self.texture_size[1] + 50
+                            text_size: self.width, None
+                            halign: 'left'
+                            valign: 'top'
+                        
+                        # Share & Download buttons
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_y: None
+                            height: '50dp'
+                            spacing: 10
+                            
+                            Button:
+                                text: 'Download Report'
+                                on_press: root.download_report()
+                            
+                            Button:
+                                text: 'Share Report'
+                                on_press: root.share_report()
+            
+            TabbedPanelItem:
+                text: 'Comparison'
+                
+                ScrollView:
+                    do_scroll_x: False
+                    
+                    BoxLayout:
+                        id: comparison_content
+                        orientation: 'vertical'
+                        size_hint_y: None
+                        height: self.minimum_height
+                        padding: 10
+                        spacing: 15
+            
+            TabbedPanelItem:
+                text: 'Similar Profiles'
+                
+                ScrollView:
+                    do_scroll_x: False
+                    
+                    BoxLayout:
+                        id: profiles_content
+                        orientation: 'vertical'
+                        size_hint_y: None
+                        height: self.minimum_height
+                        padding: 10
+                        spacing: 15
+
+<HistoryScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        
+        # Header
+        Label:
+            text: 'Report History'
+            size_hint_y: None
+            height: '50dp'
+            font_size: '24sp'
+            bold: True
+        
+        # History list
+        ScrollView:
+            do_scroll_x: False
+            
+            BoxLayout:
+                id: history_list
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: 10
+                spacing: 15
+        
+        # Navigation bar
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '50dp'
+            
+            Button:
+                text: 'Analyze'
+                on_press: app.root.current = 'analyze'
+            
+            Button:
+                text: 'History'
+                disabled: True
+            
+            Button:
+                text: 'Settings'
+                on_press: app.root.current = 'settings'
+
+<SettingsScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+        
+        # Header
+        Label:
+            text: 'Settings'
+            size_hint_y: None
+            height: '50dp'
+            font_size: '24sp'
+            bold: True
+        
+        ScrollView:
+            do_scroll_x: False
+            
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: 10
+                spacing: 15
+                
+                # API settings
+                MDCard:
+                    orientation: 'vertical'
+                    padding: 15
+                    size_hint_y: None
+                    height: '120dp'
+                    
+                    Label:
+                        text: 'API Configuration'
+                        size_hint_y: None
+                        height: '30dp'
+                        font_size: '18sp'
+                        bold: True
+                    
+                    TextInput:
+                        id: api_key_input
+                        hint_text: 'Enter Groq API Key'
+                        password: True
+                        size_hint_y: None
+                        height: '40dp'
+                    
+                    Button:
+                        text: 'Save API Key'
+                        size_hint_y: None
+                        height: '40dp'
+                        on_press: root.save_api_key()
+                
+                # App appearance
+                MDCard:
+                    orientation: 'vertical'
+                    padding: 15
+                    size_hint_y: None
+                    height: '150dp'
+                    
+                    Label:
+                        text: 'App Appearance'
+                        size_hint_y: None
+                        height: '30dp'
+                        font_size: '18sp'
+                        bold: True
+                    
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: '40dp'
+                        
+                        Label:
+                            text: 'Theme:'
+                            size_hint_x: 0.3
+                        
+                        Spinner:
+                            text: 'Light'
+                            values: ['Light', 'Dark', 'System Default']
+                            size_hint_x: 0.7
+                    
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: '40dp'
+                        
+                        Label:
+                            text: 'Language:'
+                            size_hint_x: 0.3
+                        
+                        Spinner:
+                            text: 'English'
+                            values: ['English', 'Spanish', 'French']
+                            size_hint_x: 0.7
+                    
+                    Button:
+                        text: 'Save Settings'
+                        size_hint_y: None
+                        height: '40dp'
+                        on_press: root.save_settings()
+                
+                # Data management
+                MDCard:
+                    orientation: 'vertical'
+                    padding: 15
+                    size_hint_y: None
+                    height: '100dp'
+                    
+                    Label:
+                        text: 'Data Management'
+                        size_hint_y: None
+                        height: '30dp'
+                        font_size: '18sp'
+                        bold: True
+                    
+                    Button:
+                        text: 'Clear Report History'
+                        size_hint_y: None
+                        height: '40dp'
+                        on_press: root.clear_history()
+                
+                # About section
+                MDCard:
+                    orientation: 'vertical'
+                    padding: 15
+                    size_hint_y: None
+                    height: '150dp'
+                    
+                    Label:
+                        text: 'About'
+                        size_hint_y: None
+                        height: '30dp'
+                        font_size: '18sp'
+                        bold: True
+                    
+                    Label:
+                        text: 'Soil Health Analyzer v1.0\n\nThis application uses soil parameter values to generate comprehensive soil deficiency reports and provides recommendations for improving soil health.\n\nPowered by Groq LLM API\n\n© 2024 Soil Health Analyzer'
+                        size_hint_y: None
+                        height: '100dp'
+                        text_size: self.width, None
+                        halign: 'left'
+                        valign: 'top'
+        
+        # Navigation bar
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_y: None
+            height: '50dp'
+            
+            Button:
+                text: 'Analyze'
+                on_press: app.root.current = 'analyze'
+            
+            Button:
+                text: 'History'
+                on_press: app.root.current = 'history'
+            
+            Button:
+                text: 'Settings'
+                disabled: True 
