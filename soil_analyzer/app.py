@@ -660,6 +660,7 @@ elif st.session_state.active_tab == "settings":
     Powered by Groq LLM(Llama 3.1) API and Streamlit
     
     © 2025 Soil Health Analyzer
+    © Ashwin Mehta 
     """)
 
 # Footer
