@@ -239,7 +239,7 @@ def classify_soil_parameter(value, parameter):
     for category, (min_val, max_val) in soil_ranges[parameter].items():
         if min_val <= value < max_val:
             return category
-    return "unknown"
+    return "None of the above"
 
 # Function to get color based on category
 def get_color_for_category(category):
@@ -307,10 +307,10 @@ def create_gauge_chart(value, parameter, min_val=0, max_val=100):
 def generate_soil_report(ph, n, p, k):
     # Find the most suitable crop based on soil parameters
     def weighted_distance(row):
-        ph_diff = abs(row['pH'] - ph) / 14  # Normalize pH (0-14 range)
-        n_diff = abs(row['N'] - n) / 150    # Normalize N (assuming 0-150 range)
-        p_diff = abs(row['P'] - p) / 100    # Normalize P
-        k_diff = abs(row['K'] - k) / 100    # Normalize K
+        ph_diff = abs(row['pH-level'] - ph) / 14  # Normalize pH (0-14 range)
+        n_diff = abs(row['N-level'] - n) / 150    # Normalize N (assuming 0-150 range)
+        p_diff = abs(row['P-level'] - p) / 100    # Normalize P
+        k_diff = abs(row['K-level'] - k) / 100    # Normalize K
         return ph_diff * 0.4 + n_diff * 0.2 + p_diff * 0.2 + k_diff * 0.2
 
     data['distance'] = data.apply(weighted_distance, axis=1)
@@ -327,7 +327,7 @@ def generate_soil_report(ph, n, p, k):
     k_status = "optimal" if soil_ranges["K"]["medium"][0] <= k <= soil_ranges["K"]["high"][1] else "deficient"
     
     # If no API key available, use the existing report from the dataset
-    if not GROQ_API_KEY or GROQ_API_KEY == "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":
+    if not GROQ_API_KEY or GROQ_API_KEY == "Your Groq API Key Here":
         st.warning("⚠️ No Groq API key found. Using pre-generated reports from the dataset.")
         report = best_match['Report']
         return report, suitable_crop, closest_matches
