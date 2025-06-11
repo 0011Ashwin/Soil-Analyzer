@@ -1,5 +1,4 @@
 # 🌱 Soil Health Analyzer App
-![plant.png](plant.png)
 A comprehensive mobile-friendly application that analyzes soil health based on pH and NPK values and generates detailed soil deficiency reports using the Groq LLM API.
 
 ![Soil Health Analyzer](plant.png)
